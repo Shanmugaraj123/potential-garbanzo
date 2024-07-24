@@ -1,0 +1,41 @@
+<?php
+include 'config.php';
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+header("Location: login.php");
+exit();
+}
+
+$user_id = $_SESSION['user_id'];
+
+$sql = "SELECT * FROM rooms";
+$rooms = $conn->query($sql);
+?>
+
+<h1>Welcome to the Hostel Management System</h1>
+
+<h2>Available Rooms</h2>
+<table border="1">
+<tr>
+<th>Room Number</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+<?php while ($room = $rooms->fetch_assoc()): ?>
+<tr>
+<td><?php echo $room['room_number']; ?></td>
+<td><?php echo $room['status']; ?></td>
+<td>
+<?php if ($room['status'] === 'available'): ?>
+<form method="post" action="book_room.php">
+<input type="hidden" name="room_id" value="<?php echo $room['id']; ?>">
+<input type="submit" value="Book Now">
+</form>
+<?php else: ?>
+Booked
+<?php endif; ?>
+</td>
+</tr>
+<?php endwhile; ?>
+</table>
